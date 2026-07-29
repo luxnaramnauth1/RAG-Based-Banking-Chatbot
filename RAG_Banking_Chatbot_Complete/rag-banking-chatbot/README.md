@@ -37,6 +37,31 @@ Open-source LLM (TinyLlama-1.1B-Chat, swappable) generates the answer
 Answer + cited sources returned to the user
 ```
 
+**Option C — Backend REST API:**
+
+```bash
+cd src
+uvicorn api:app --reload --port 8000
+```
+
+Then, in another terminal:
+
+```bash
+curl http://localhost:8000/health
+curl http://localhost:8000/categories
+curl -X POST http://localhost:8000/ask \
+     -H "Content-Type: application/json" \
+     -d '{"question": "How much is the overdraft fee?"}'
+```
+
+Interactive Swagger docs: http://localhost:8000/docs
+
+This wraps the retrieval pipeline in a proper REST API (`src/api.py` + `src/retrieval_engine.py`)
+so it can be called from a web frontend, a mobile app, or another service. It uses the same
+TF-IDF retrieval as the browser demo (fast, zero-download) but keeps the same request/response
+contract you'd use with the full embeddings+LLM pipeline in `ingest.py`/`chatbot.py` — swapping
+in real models means changing the internals of `retrieval_engine.py`, not the API surface.
+
 ## Project structure
 
 ```
@@ -45,9 +70,13 @@ rag-banking-chatbot/
 │   └── banking_kb.json        # 26-document banking knowledge base (8 categories)
 ├── src/
 │   ├── config.py               # model + retrieval settings (single place to tune)
-│   ├── ingest.py                # builds & persists the vector index
-│   └── chatbot.py               # query engine + interactive CLI chat loop
+│   ├── ingest.py                # builds & persists the vector index (full pipeline)
+│   ├── chatbot.py               # query engine + interactive CLI chat loop (full pipeline)
+│   ├── retrieval_engine.py      # TF-IDF retrieval engine (used by the API + browser demo)
+│   └── api.py                   # FastAPI backend exposing /health, /categories, /ask
 ├── RAG_Banking_Chatbot.ipynb  # main walkthrough notebook (recommended entry point)
+├── demo.html                  # in-browser interactive demo (dark theme)
+├── demo_orange.html           # in-browser interactive demo (orange theme)
 ├── requirements.txt
 └── README.md
 ```
