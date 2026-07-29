@@ -1,7 +1,5 @@
 # RAG-Based-Banking-Chatbot
 
-# RAG-Based Banking Chatbot
-
 A Retrieval-Augmented Generation (RAG) chatbot that answers customer questions about **accounts, loans, credit cards, fees, security, and digital banking**, grounded entirely in a bank's own policy knowledge base and powered by an **open-source LLM** (no paid API keys required).
 
 Built with **Python, LlamaIndex, and Hugging Face Transformers**.
@@ -125,10 +123,8 @@ Have a GPU and want better answers? Swap `LLM_MODEL_NAME` for something like `Qw
 
 RAG system design · vector embeddings & similarity search · open-source LLM integration (Hugging Face) · prompt engineering for factual grounding & hallucination control · Python software structure (config-driven, modular) · domain modeling for a regulated industry (banking)
 
----
 
-### Suggested CV bullet points
 
-> **RAG-Based Banking Chatbot** — Built a retrieval-augmented generation chatbot answering banking policy questions (accounts, loans, fees, cards) using open-source embedding and language models (Hugging Face, LlamaIndex). Designed a grounded prompting strategy to prevent hallucinated financial figures and implemented source-citation for auditability.
+Face, LlamaIndex). Designed a grounded prompting strategy to prevent hallucinated financial figures and implemented source-citation for auditability.
 
 > Designed and implemented an end-to-end RAG pipeline (chunking → embedding → vector retrieval → constrained generation) in Python using LlamaIndex and Hugging Face Transformers, achieving accurate, source-cited answers over a domain-specific banking knowledge base while explicitly refusing out-of-scope queries to reduce hallucination risk.
