@@ -4,6 +4,8 @@ A Retrieval-Augmented Generation (RAG) chatbot that answers customer questions a
 
 Built with **Python, LlamaIndex, and Hugging Face Transformers**.
 
+<img width="924" height="838" alt="2027" src="https://github.com/user-attachments/assets/e612df4d-4782-4849-aa58-98cac936a33d" />
+
 ## Why this project
 
 Off-the-shelf LLMs will confidently invent interest rates, fees, and policies they were never told about — a serious problem in a regulated domain like banking. This project demonstrates a RAG pipeline that:
