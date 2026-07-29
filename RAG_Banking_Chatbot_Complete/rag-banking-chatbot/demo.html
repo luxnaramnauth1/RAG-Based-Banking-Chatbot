@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vault — RAG Banking Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#101C26;
+    --slate:#2E4A5E;
+    --brass:#B8905A;
+    --brass-bright:#D4A96A;
+    --paper:#EEEBE2;
+    --paper-dim:#DCD8CC;
+    --ok:#4F7A5C;
+    --line:rgba(16,28,38,0.14);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:48px 24px 80px;}
+
+  header{margin-bottom:40px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--brass-bright);
+    display:flex; align-items:center; gap:10px;
+    margin-bottom:14px;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(79,122,92,0.25);}
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(32px,5vw,48px);
+    margin:0 0 12px;
+    line-height:1.05;
+    letter-spacing:-0.01em;
+  }
+  .sub{
+    color:rgba(238,235,226,0.65);
+    font-size:15px;
+    max-width:56ch;
+    line-height:1.55;
+  }
+  .sub b{color:var(--paper);font-weight:600;}
+
+  /* Query slip */
+  .slip{
+    background:var(--paper);
+    color:var(--ink);
+    border-radius:4px;
+    padding:22px 22px 20px;
+    box-shadow:0 20px 50px -20px rgba(0,0,0,0.6);
+    position:relative;
+  }
+  .slip::before{
+    content:"";
+    position:absolute; top:0; left:0; right:0; height:4px;
+    background:repeating-linear-gradient(90deg, var(--brass) 0 14px, transparent 14px 22px);
+    border-radius:4px 4px 0 0;
+  }
+  .slip-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--slate);
+    margin-bottom:10px;
+    display:block;
+  }
+  .input-row{display:flex; gap:10px;}
+  input#q{
+    flex:1;
+    border:1px solid var(--line);
+    background:#fff;
+    border-radius:3px;
+    padding:13px 14px;
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    color:var(--ink);
+  }
+  input#q:focus{outline:2px solid var(--brass); outline-offset:1px;}
+  button#ask{
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    border-radius:3px;
+    padding:0 22px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+    transition:background 0.15s ease;
+  }
+  button#ask:hover{background:var(--slate);}
+  button#ask:focus-visible{outline:2px solid var(--brass); outline-offset:2px;}
+
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px;}
+  .chip{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    padding:6px 11px;
+    border:1px solid var(--line);
+    border-radius:20px;
+    background:transparent;
+    color:var(--slate);
+    cursor:pointer;
+    transition:all 0.15s ease;
+  }
+  .chip:hover{border-color:var(--brass); color:var(--ink); background:rgba(184,144,90,0.12);}
+
+  /* Pipeline trace */
+  #pipeline{margin-top:36px; display:none;}
+  .step{
+    display:grid;
+    grid-template-columns:28px 1fr;
+    gap:14px;
+    padding:16px 0;
+    border-bottom:1px solid rgba(238,235,226,0.1);
+    opacity:0;
+    transform:translateY(6px);
+    animation:rise 0.4s ease forwards;
+  }
+  .step:last-child{border-bottom:none;}
+  @keyframes rise{to{opacity:1; transform:translateY(0);}}
+  .step-num{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--brass-bright);
+    padding-top:2px;
+  }
+  .step-title{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:rgba(238,235,226,0.55);
+    margin-bottom:8px;
+  }
+  .step-body{font-size:14.5px; line-height:1.6; color:var(--paper);}
+
+  /* Retrieved line items — receipt style */
+  .ledger{
+    background:rgba(238,235,226,0.04);
+    border:1px solid rgba(238,235,226,0.14);
+    border-radius:4px;
+    overflow:hidden;
+  }
+  .line-item{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:12px;
+    padding:12px 16px;
+    border-bottom:1px dashed rgba(238,235,226,0.16);
+    align-items:center;
+  }
+  .line-item:last-child{border-bottom:none;}
+  .li-main{min-width:0;}
+  .li-cat{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--brass-bright);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+  }
+  .li-title{font-size:14px; font-weight:500; margin-top:2px;}
+  .li-score{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    text-align:right;
+    color:var(--paper);
+    white-space:nowrap;
+  }
+  .li-bar{
+    width:70px; height:4px; border-radius:2px;
+    background:rgba(238,235,226,0.15);
+    margin-top:6px; overflow:hidden;
+  }
+  .li-bar span{display:block; height:100%; background:var(--brass-bright); border-radius:2px;}
+
+  /* Answer card */
+  .answer-card{
+    background:var(--paper);
+    color:var(--ink);
+    border-radius:4px;
+    padding:20px 22px;
+    position:relative;
+  }
+  .answer-card.refuse{background:#3A2B2B; color:#EFD9C9;}
+  .answer-card::before{
+    content:"";
+    position:absolute; top:0; left:0; bottom:0; width:4px;
+    background:var(--ok);
+    border-radius:4px 0 0 4px;
+  }
+  .answer-card.refuse::before{background:#C97B5A;}
+  .answer-text{font-size:15.5px; line-height:1.65;}
+  .answer-cite{
+    margin-top:14px;
+    padding-top:12px;
+    border-top:1px solid var(--line);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    color:var(--slate);
+  }
+  .answer-cite b{color:var(--ink);}
+
+  footer{
+    margin-top:44px;
+    padding-top:20px;
+    border-top:1px solid rgba(238,235,226,0.12);
+    font-size:12.5px;
+    color:rgba(238,235,226,0.45);
+    line-height:1.6;
+  }
+  footer code{
+    font-family:'IBM Plex Mono',monospace;
+    background:rgba(238,235,226,0.08);
+    padding:1px 5px;
+    border-radius:3px;
+    color:rgba(238,235,226,0.7);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .step{animation:none; opacity:1; transform:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow"><span class="dot"></span>Live demo · in-browser retrieval</div>
+    <h1>Vault — RAG Banking Assistant</h1>
+    <p class="sub">
+      Ask a question. This runs a <b>real retrieval pipeline</b> in your browser — TF‑IDF similarity
+      search over the same 26-document banking knowledge base used in the full project — then composes
+      a grounded answer, or honestly refuses if the knowledge base doesn't cover it.
+    </p>
+  </header>
+
+  <div class="slip">
+    <span class="slip-label">Customer inquiry</span>
+    <div class="input-row">
+      <input id="q" type="text" placeholder="e.g. How much is the overdraft fee?" autocomplete="off">
+      <button id="ask">Ask</button>
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <div id="pipeline"></div>
+
+  <footer>
+    Retrieval here uses TF‑IDF + cosine similarity for a dependency-free, in-browser demo.
+    The production pipeline (see <code>RAG_Banking_Chatbot.ipynb</code>) swaps this for real
+    sentence-transformer embeddings and an open-source LLM (TinyLlama) via LlamaIndex — same
+    architecture, same grounding strategy, higher-fidelity retrieval and generation.
+  </footer>
+</div>
+
+<script>
+const KB = [{"id": "acc-001", "category": "Accounts", "title": "How to open a savings account", "content": "To open a savings account, visit any branch with a valid government-issued photo ID (passport, driver's license, or national ID card), proof of address (utility bill or bank statement dated within 3 months), and your Social Security Number or Tax ID. You can also apply online through the bank's website or mobile app in about 10 minutes. A minimum opening deposit of $25 is required. Accounts are typically activated within 1 business day."}, {"id": "acc-002", "category": "Accounts", "title": "Minimum balance requirements", "content": "Standard savings accounts require a minimum daily balance of $300 to avoid a $5 monthly maintenance fee. Basic checking accounts have no minimum balance requirement. Premium checking accounts require a $1,500 minimum balance or $2,000 in combined deposits to waive the $15 monthly fee."}, {"id": "acc-003", "category": "Accounts", "title": "Closing an account", "content": "To close an account, you must have a zero or positive balance and no pending transactions. You can close an account in person at a branch, by calling customer service, or by submitting a signed closure request through online banking. Any remaining balance will be issued as a check or transferred to another account within 5-7 business days."}, {"id": "acc-004", "category": "Accounts", "title": "Joint account rules", "content": "A joint account can be opened by two or more adults, each of whom has equal rights to deposit, withdraw, and manage the account unless otherwise specified. All account holders must provide valid ID during account opening. Either party can typically close the account unless the account is set up to require both signatures."}, {"id": "loan-001", "category": "Loans", "title": "Personal loan eligibility", "content": "To qualify for a personal loan, applicants generally need a minimum credit score of 640, proof of steady income for at least 6 months, and a debt-to-income ratio below 40%. Loan amounts range from $1,000 to $50,000 with repayment terms from 12 to 60 months. Interest rates are based on creditworthiness and currently range from 7.99% to 24.99% APR."}, {"id": "loan-002", "category": "Loans", "title": "Home loan (mortgage) requirements", "content": "Mortgage applicants need a minimum credit score of 620 for conventional loans, a down payment of at least 3-20% depending on loan type, and a debt-to-income ratio below 43%. Required documents include pay stubs, W-2s or tax returns for the last 2 years, bank statements, and proof of employment. Pre-approval typically takes 3-5 business days."}, {"id": "loan-003", "category": "Loans", "title": "Auto loan terms", "content": "Auto loans are available for new and used vehicles with terms from 24 to 84 months. Interest rates start at 5.49% APR for new vehicles and 6.99% APR for used vehicles, depending on credit score and loan term. A down payment is not required but can lower your monthly payment and total interest paid."}, {"id": "loan-004", "category": "Loans", "title": "How loan interest is calculated", "content": "Most consumer loans use simple interest calculated on the outstanding principal balance. Interest accrues daily and is added to your balance based on your Annual Percentage Rate (APR) divided by 365. Mortgages typically use an amortization schedule where early payments go mostly toward interest and later payments go mostly toward principal."}, {"id": "loan-005", "category": "Loans", "title": "Early loan repayment and prepayment penalties", "content": "Personal loans and auto loans issued after 2015 carry no prepayment penalty, meaning you can pay off your loan early without additional fees. Some older mortgage products may include a prepayment penalty of 1-2% of the remaining balance if paid off within the first 3 years; check your loan agreement for specific terms."}, {"id": "card-001", "category": "Credit Cards", "title": "Applying for a credit card", "content": "Credit card applications require proof of income, a valid ID, and a Social Security Number. Approval decisions are typically instant online, with credit limits ranging from $500 to $25,000 based on creditworthiness. New cardholders receive their physical card by mail within 7-10 business days."}, {"id": "card-002", "category": "Credit Cards", "title": "Late payment fees and grace period", "content": "Credit card payments have a grace period of at least 21 days after the billing cycle closes before interest is charged on new purchases, provided the previous balance was paid in full. Payments made after the due date incur a late fee of up to $40 and may trigger a penalty APR increase after the second late payment within 6 months."}, {"id": "card-003", "category": "Credit Cards", "title": "Disputing a credit card transaction", "content": "To dispute an unauthorized or incorrect credit card charge, contact customer service within 60 days of the statement date showing the error. You can file a dispute online, via the mobile app, or by phone. The bank will issue a provisional credit within 10 business days while investigating, and disputes are typically resolved within 90 days."}, {"id": "fee-001", "category": "Fees", "title": "Overdraft fees", "content": "An overdraft fee of $34 is charged per transaction when your checking account balance goes negative, up to a maximum of 3 fees per day ($102). Customers can opt out of overdraft coverage for debit card and ATM transactions, in which case those transactions will simply be declined instead of incurring a fee. Overdraft protection linking a savings account is also available for a $10 transfer fee."}, {"id": "fee-002", "category": "Fees", "title": "ATM fees", "content": "Using an in-network ATM is free. Out-of-network ATM withdrawals incur a $3 fee from the bank, plus any fee charged by the ATM operator (typically $2-5). Premium checking account holders receive up to 4 free out-of-network ATM fee reimbursements per statement cycle."}, {"id": "fee-003", "category": "Fees", "title": "Wire transfer fees", "content": "Domestic outgoing wire transfers cost $25, and incoming domestic wires are free. International outgoing wire transfers cost $45, and incoming international wires cost $15. Same-day wire transfers must be initiated before 4:00 PM local time to be processed the same business day."}, {"id": "fee-004", "category": "Fees", "title": "Foreign transaction fees", "content": "Standard debit and credit cards charge a foreign transaction fee of 3% on purchases made outside the country or in a foreign currency. Premium travel credit card products waive this fee entirely. Currency conversion is calculated using the exchange rate on the day the transaction is processed, not the day of purchase."}, {"id": "kyc-001", "category": "Security & Compliance", "title": "What is KYC (Know Your Customer)?", "content": "KYC is a mandatory identity verification process banks use to confirm a customer's identity, assess risk, and prevent fraud and money laundering. It requires submitting government-issued ID, proof of address, and sometimes a selfie for biometric verification. KYC checks are required when opening an account and may be repeated periodically or when account activity changes significantly."}, {"id": "kyc-002", "category": "Security & Compliance", "title": "Reporting a lost or stolen card", "content": "If your debit or credit card is lost or stolen, report it immediately through the mobile app, online banking, or by calling the 24/7 customer service hotline. Your card will be frozen instantly, and a replacement will be mailed within 5-7 business days, or you can request expedited shipping for a $15 fee. You are not liable for unauthorized transactions reported within 2 business days of discovering the loss."}, {"id": "kyc-003", "category": "Security & Compliance", "title": "Two-factor authentication for online banking", "content": "Online and mobile banking require two-factor authentication (2FA) for login and for sensitive actions like adding a payee or changing contact information. 2FA options include a one-time SMS code, an authenticator app, or biometric verification (fingerprint or face ID) on supported devices."}, {"id": "mob-001", "category": "Digital Banking", "title": "Mobile check deposit", "content": "Mobile check deposit allows you to deposit checks by photographing the front and back through the mobile app. Deposits submitted before 9:00 PM local time on a business day are typically available the next business day, subject to a $5,000 daily limit for standard accounts ($10,000 for premium accounts). Endorse the check with 'For Mobile Deposit Only' along with your signature."}, {"id": "mob-002", "category": "Digital Banking", "title": "Setting up direct deposit", "content": "To set up direct deposit, provide your employer with the bank's routing number and your account number, found on your checks or in the mobile app under Account Details. Direct deposits usually take 1-2 pay cycles to take effect. Many accounts also offer early payday, releasing direct deposit funds up to 2 days before the scheduled date."}, {"id": "mob-003", "category": "Digital Banking", "title": "Transfer limits between accounts", "content": "Transfers between your own accounts at the same bank are instant and have no limit. Transfers to external accounts via ACH take 1-3 business days and are limited to $10,000 per day and $25,000 per month for standard accounts. Instant transfer services to debit cards are available for a small fee and complete within minutes."}, {"id": "int-001", "category": "Interest & Rates", "title": "Savings account interest rates", "content": "Standard savings accounts earn 0.05% Annual Percentage Yield (APY). High-yield savings accounts earn up to 4.25% APY, with rates that are variable and tied to the Federal Reserve's benchmark rate. Interest is compounded daily and credited to your account monthly."}, {"id": "int-002", "category": "Interest & Rates", "title": "Certificate of Deposit (CD) rates and terms", "content": "CDs are available with terms from 3 months to 5 years, with rates increasing for longer terms, currently ranging from 2.5% to 4.75% APY. Early withdrawal before maturity incurs a penalty equal to 90 days of interest for terms under 1 year, or 180 days of interest for longer terms."}, {"id": "dispute-001", "category": "Customer Service", "title": "How to file a complaint", "content": "Complaints can be filed through the mobile app's Help Center, by calling customer service, or by visiting a branch. Formal written complaints receive an acknowledgment within 2 business days and a resolution or status update within 15 business days, in line with consumer protection regulations."}, {"id": "dispute-002", "category": "Customer Service", "title": "Customer service hours and contact channels", "content": "Phone support is available 24/7 at the number on the back of your card. Live chat through the mobile app is available from 7:00 AM to 11:00 PM local time daily. Branch hours are typically Monday-Friday 9:00 AM-5:00 PM and Saturday 9:00 AM-1:00 PM, though hours vary by location."}];
+
+const STOPWORDS = new Set(("a an the to of for and or is are was were be been being in on at by with "+
+  "as from this that these those it its your you can will may within up out per if not no do does "+
+  "using use used than into also which what when where how i my me").split(" "));
+
+function tokenize(text){
+  return text.toLowerCase()
+    .replace(/[^a-z0-9%$.\s-]/g," ")
+    .split(/\s+/)
+    .filter(t=>t.length>1 && !STOPWORDS.has(t));
+}
+
+// Build TF-IDF corpus once
+const docs = KB.map(r => ({...r, tokens: tokenize(r.title+" "+r.title+" "+r.content)}));
+const df = {};
+docs.forEach(d=>{
+  new Set(d.tokens).forEach(t=> df[t] = (df[t]||0)+1 );
+});
+const N = docs.length;
+function idf(t){ return Math.log((N+1)/((df[t]||0)+1)) + 1; }
+
+function tfVector(tokens){
+  const tf = {};
+  tokens.forEach(t=> tf[t]=(tf[t]||0)+1 );
+  const vec = {};
+  Object.keys(tf).forEach(t=> vec[t] = (tf[t]/tokens.length) * idf(t) );
+  return vec;
+}
+docs.forEach(d=> d.vec = tfVector(d.tokens));
+
+function cosine(a,b){
+  let dot=0, na=0, nb=0;
+  for(const k in a){ na += a[k]*a[k]; if(b[k]) dot += a[k]*b[k]; }
+  for(const k in b){ nb += b[k]*b[k]; }
+  if(na===0||nb===0) return 0;
+  return dot/(Math.sqrt(na)*Math.sqrt(nb));
+}
+
+function retrieve(query, k=3){
+  const qVec = tfVector(tokenize(query));
+  const scored = docs.map(d=> ({...d, score: cosine(qVec,d.vec)}));
+  scored.sort((a,b)=> b.score-a.score);
+  return scored.slice(0,k);
+}
+
+function composeAnswer(query, hits){
+  const threshold = 0.055;
+  if(!hits.length || hits[0].score < threshold){
+    return {ok:false, text:"I don't have that information in this knowledge base — please contact customer service."};
+  }
+  const top = hits[0];
+  // simple extractive synthesis: lead with the most relevant document's content
+  return {ok:true, text: top.content, title: top.title};
+}
+
+const examples = [
+  "How much is the overdraft fee?",
+  "Can I pay off my personal loan early?",
+  "What do I need to open a savings account?",
+  "What's the weather forecast for tomorrow?",
+  "How does mobile check deposit work?"
+];
+const chipsEl = document.getElementById('chips');
+examples.forEach(ex=>{
+  const b = document.createElement('button');
+  b.className='chip'; b.textContent=ex;
+  b.onclick=()=>{ document.getElementById('q').value=ex; run(ex); };
+  chipsEl.appendChild(b);
+});
+
+const pipelineEl = document.getElementById('pipeline');
+
+function stepEl(num, title, bodyHtml, delay){
+  const el = document.createElement('div');
+  el.className='step';
+  el.style.animationDelay = delay+'ms';
+  el.innerHTML = `<div class="step-num">${num}</div>
+    <div>
+      <div class="step-title">${title}</div>
+      <div class="step-body">${bodyHtml}</div>
+    </div>`;
+  return el;
+}
+
+function run(query){
+  if(!query || !query.trim()) return;
+  pipelineEl.style.display='block';
+  pipelineEl.innerHTML='';
+
+  const tokens = tokenize(query);
+  const hits = retrieve(query, 3);
+  const answer = composeAnswer(query, hits);
+
+  // Step 1: embed
+  pipelineEl.appendChild(stepEl(1, 'Query received & tokenized',
+    `<span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--brass-bright)">“${query}”</span>
+     <div style="margin-top:8px;color:rgba(238,235,226,0.6);font-size:13px;">
+       ${tokens.length} content terms extracted → vectorized (TF‑IDF)
+     </div>`, 0));
+
+  // Step 2: retrieval
+  const items = hits.map(h=>{
+    const pct = Math.max(4, Math.round(h.score*100));
+    return `<div class="line-item">
+      <div class="li-main">
+        <div class="li-cat">${h.category}</div>
+        <div class="li-title">${h.title}</div>
+        <div class="li-bar"><span style="width:${Math.min(100,pct*2)}%"></span></div>
+      </div>
+      <div class="li-score">${(h.score*100).toFixed(1)}%</div>
+    </div>`;
+  }).join('');
+  pipelineEl.appendChild(stepEl(2, 'Top-3 chunks retrieved (cosine similarity)',
+    `<div class="ledger">${items}</div>`, 150));
+
+  // Step 3: grounded generation
+  const answerHtml = answer.ok
+    ? `<div class="answer-card">
+         <div class="answer-text">${answer.text}</div>
+         <div class="answer-cite">Grounded in: <b>${answer.title}</b></div>
+       </div>`
+    : `<div class="answer-card refuse">
+         <div class="answer-text">${answer.text}</div>
+         <div class="answer-cite">Highest match scored below the confidence threshold — refusing rather than guessing.</div>
+       </div>`;
+  pipelineEl.appendChild(stepEl(3, answer.ok ? 'Grounded answer composed' : 'No confident match — refusing to answer',
+    answerHtml, 300));
+}
+
+document.getElementById('ask').addEventListener('click', ()=> run(document.getElementById('q').value));
+document.getElementById('q').addEventListener('keydown', e=>{ if(e.key==='Enter') run(e.target.value); });
+
+// seed with a first example
+run(examples[0]);
+document.getElementById('q').value = examples[0];
+</script>
+</body>
+</html>

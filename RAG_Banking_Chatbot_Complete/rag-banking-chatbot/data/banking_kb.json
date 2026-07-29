@@ -1,0 +1,158 @@
+[
+  {
+    "id": "acc-001",
+    "category": "Accounts",
+    "title": "How to open a savings account",
+    "content": "To open a savings account, visit any branch with a valid government-issued photo ID (passport, driver's license, or national ID card), proof of address (utility bill or bank statement dated within 3 months), and your Social Security Number or Tax ID. You can also apply online through the bank's website or mobile app in about 10 minutes. A minimum opening deposit of $25 is required. Accounts are typically activated within 1 business day."
+  },
+  {
+    "id": "acc-002",
+    "category": "Accounts",
+    "title": "Minimum balance requirements",
+    "content": "Standard savings accounts require a minimum daily balance of $300 to avoid a $5 monthly maintenance fee. Basic checking accounts have no minimum balance requirement. Premium checking accounts require a $1,500 minimum balance or $2,000 in combined deposits to waive the $15 monthly fee."
+  },
+  {
+    "id": "acc-003",
+    "category": "Accounts",
+    "title": "Closing an account",
+    "content": "To close an account, you must have a zero or positive balance and no pending transactions. You can close an account in person at a branch, by calling customer service, or by submitting a signed closure request through online banking. Any remaining balance will be issued as a check or transferred to another account within 5-7 business days."
+  },
+  {
+    "id": "acc-004",
+    "category": "Accounts",
+    "title": "Joint account rules",
+    "content": "A joint account can be opened by two or more adults, each of whom has equal rights to deposit, withdraw, and manage the account unless otherwise specified. All account holders must provide valid ID during account opening. Either party can typically close the account unless the account is set up to require both signatures."
+  },
+  {
+    "id": "loan-001",
+    "category": "Loans",
+    "title": "Personal loan eligibility",
+    "content": "To qualify for a personal loan, applicants generally need a minimum credit score of 640, proof of steady income for at least 6 months, and a debt-to-income ratio below 40%. Loan amounts range from $1,000 to $50,000 with repayment terms from 12 to 60 months. Interest rates are based on creditworthiness and currently range from 7.99% to 24.99% APR."
+  },
+  {
+    "id": "loan-002",
+    "category": "Loans",
+    "title": "Home loan (mortgage) requirements",
+    "content": "Mortgage applicants need a minimum credit score of 620 for conventional loans, a down payment of at least 3-20% depending on loan type, and a debt-to-income ratio below 43%. Required documents include pay stubs, W-2s or tax returns for the last 2 years, bank statements, and proof of employment. Pre-approval typically takes 3-5 business days."
+  },
+  {
+    "id": "loan-003",
+    "category": "Loans",
+    "title": "Auto loan terms",
+    "content": "Auto loans are available for new and used vehicles with terms from 24 to 84 months. Interest rates start at 5.49% APR for new vehicles and 6.99% APR for used vehicles, depending on credit score and loan term. A down payment is not required but can lower your monthly payment and total interest paid."
+  },
+  {
+    "id": "loan-004",
+    "category": "Loans",
+    "title": "How loan interest is calculated",
+    "content": "Most consumer loans use simple interest calculated on the outstanding principal balance. Interest accrues daily and is added to your balance based on your Annual Percentage Rate (APR) divided by 365. Mortgages typically use an amortization schedule where early payments go mostly toward interest and later payments go mostly toward principal."
+  },
+  {
+    "id": "loan-005",
+    "category": "Loans",
+    "title": "Early loan repayment and prepayment penalties",
+    "content": "Personal loans and auto loans issued after 2015 carry no prepayment penalty, meaning you can pay off your loan early without additional fees. Some older mortgage products may include a prepayment penalty of 1-2% of the remaining balance if paid off within the first 3 years; check your loan agreement for specific terms."
+  },
+  {
+    "id": "card-001",
+    "category": "Credit Cards",
+    "title": "Applying for a credit card",
+    "content": "Credit card applications require proof of income, a valid ID, and a Social Security Number. Approval decisions are typically instant online, with credit limits ranging from $500 to $25,000 based on creditworthiness. New cardholders receive their physical card by mail within 7-10 business days."
+  },
+  {
+    "id": "card-002",
+    "category": "Credit Cards",
+    "title": "Late payment fees and grace period",
+    "content": "Credit card payments have a grace period of at least 21 days after the billing cycle closes before interest is charged on new purchases, provided the previous balance was paid in full. Payments made after the due date incur a late fee of up to $40 and may trigger a penalty APR increase after the second late payment within 6 months."
+  },
+  {
+    "id": "card-003",
+    "category": "Credit Cards",
+    "title": "Disputing a credit card transaction",
+    "content": "To dispute an unauthorized or incorrect credit card charge, contact customer service within 60 days of the statement date showing the error. You can file a dispute online, via the mobile app, or by phone. The bank will issue a provisional credit within 10 business days while investigating, and disputes are typically resolved within 90 days."
+  },
+  {
+    "id": "fee-001",
+    "category": "Fees",
+    "title": "Overdraft fees",
+    "content": "An overdraft fee of $34 is charged per transaction when your checking account balance goes negative, up to a maximum of 3 fees per day ($102). Customers can opt out of overdraft coverage for debit card and ATM transactions, in which case those transactions will simply be declined instead of incurring a fee. Overdraft protection linking a savings account is also available for a $10 transfer fee."
+  },
+  {
+    "id": "fee-002",
+    "category": "Fees",
+    "title": "ATM fees",
+    "content": "Using an in-network ATM is free. Out-of-network ATM withdrawals incur a $3 fee from the bank, plus any fee charged by the ATM operator (typically $2-5). Premium checking account holders receive up to 4 free out-of-network ATM fee reimbursements per statement cycle."
+  },
+  {
+    "id": "fee-003",
+    "category": "Fees",
+    "title": "Wire transfer fees",
+    "content": "Domestic outgoing wire transfers cost $25, and incoming domestic wires are free. International outgoing wire transfers cost $45, and incoming international wires cost $15. Same-day wire transfers must be initiated before 4:00 PM local time to be processed the same business day."
+  },
+  {
+    "id": "fee-004",
+    "category": "Fees",
+    "title": "Foreign transaction fees",
+    "content": "Standard debit and credit cards charge a foreign transaction fee of 3% on purchases made outside the country or in a foreign currency. Premium travel credit card products waive this fee entirely. Currency conversion is calculated using the exchange rate on the day the transaction is processed, not the day of purchase."
+  },
+  {
+    "id": "kyc-001",
+    "category": "Security & Compliance",
+    "title": "What is KYC (Know Your Customer)?",
+    "content": "KYC is a mandatory identity verification process banks use to confirm a customer's identity, assess risk, and prevent fraud and money laundering. It requires submitting government-issued ID, proof of address, and sometimes a selfie for biometric verification. KYC checks are required when opening an account and may be repeated periodically or when account activity changes significantly."
+  },
+  {
+    "id": "kyc-002",
+    "category": "Security & Compliance",
+    "title": "Reporting a lost or stolen card",
+    "content": "If your debit or credit card is lost or stolen, report it immediately through the mobile app, online banking, or by calling the 24/7 customer service hotline. Your card will be frozen instantly, and a replacement will be mailed within 5-7 business days, or you can request expedited shipping for a $15 fee. You are not liable for unauthorized transactions reported within 2 business days of discovering the loss."
+  },
+  {
+    "id": "kyc-003",
+    "category": "Security & Compliance",
+    "title": "Two-factor authentication for online banking",
+    "content": "Online and mobile banking require two-factor authentication (2FA) for login and for sensitive actions like adding a payee or changing contact information. 2FA options include a one-time SMS code, an authenticator app, or biometric verification (fingerprint or face ID) on supported devices."
+  },
+  {
+    "id": "mob-001",
+    "category": "Digital Banking",
+    "title": "Mobile check deposit",
+    "content": "Mobile check deposit allows you to deposit checks by photographing the front and back through the mobile app. Deposits submitted before 9:00 PM local time on a business day are typically available the next business day, subject to a $5,000 daily limit for standard accounts ($10,000 for premium accounts). Endorse the check with 'For Mobile Deposit Only' along with your signature."
+  },
+  {
+    "id": "mob-002",
+    "category": "Digital Banking",
+    "title": "Setting up direct deposit",
+    "content": "To set up direct deposit, provide your employer with the bank's routing number and your account number, found on your checks or in the mobile app under Account Details. Direct deposits usually take 1-2 pay cycles to take effect. Many accounts also offer early payday, releasing direct deposit funds up to 2 days before the scheduled date."
+  },
+  {
+    "id": "mob-003",
+    "category": "Digital Banking",
+    "title": "Transfer limits between accounts",
+    "content": "Transfers between your own accounts at the same bank are instant and have no limit. Transfers to external accounts via ACH take 1-3 business days and are limited to $10,000 per day and $25,000 per month for standard accounts. Instant transfer services to debit cards are available for a small fee and complete within minutes."
+  },
+  {
+    "id": "int-001",
+    "category": "Interest & Rates",
+    "title": "Savings account interest rates",
+    "content": "Standard savings accounts earn 0.05% Annual Percentage Yield (APY). High-yield savings accounts earn up to 4.25% APY, with rates that are variable and tied to the Federal Reserve's benchmark rate. Interest is compounded daily and credited to your account monthly."
+  },
+  {
+    "id": "int-002",
+    "category": "Interest & Rates",
+    "title": "Certificate of Deposit (CD) rates and terms",
+    "content": "CDs are available with terms from 3 months to 5 years, with rates increasing for longer terms, currently ranging from 2.5% to 4.75% APY. Early withdrawal before maturity incurs a penalty equal to 90 days of interest for terms under 1 year, or 180 days of interest for longer terms."
+  },
+  {
+    "id": "dispute-001",
+    "category": "Customer Service",
+    "title": "How to file a complaint",
+    "content": "Complaints can be filed through the mobile app's Help Center, by calling customer service, or by visiting a branch. Formal written complaints receive an acknowledgment within 2 business days and a resolution or status update within 15 business days, in line with consumer protection regulations."
+  },
+  {
+    "id": "dispute-002",
+    "category": "Customer Service",
+    "title": "Customer service hours and contact channels",
+    "content": "Phone support is available 24/7 at the number on the back of your card. Live chat through the mobile app is available from 7:00 AM to 11:00 PM local time daily. Branch hours are typically Monday-Friday 9:00 AM-5:00 PM and Saturday 9:00 AM-1:00 PM, though hours vary by location."
+  }
+]
